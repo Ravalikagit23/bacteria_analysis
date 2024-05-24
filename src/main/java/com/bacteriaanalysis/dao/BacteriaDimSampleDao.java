@@ -1,13 +1,12 @@
 package com.bacteriaanalysis.dao;
 
-import com.bacteriaanalysis.model.BacteriaInput;
-import lombok.Data;
+import com.bacteriaanalysis.entity.DimSample;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
-//@Repository
-//@Component
-//public interface BacteriaDao extends JpaRepository<String,Byte >{
-//
-//}
+@Repository
+@Component
+public interface BacteriaDimSampleDao extends JpaRepository<DimSample,Integer>{
+
+}
