@@ -1,6 +1,7 @@
 package com.bacteriaanalysis.controller;
 
 import com.bacteriaanalysis.entity.DimSample;
+import com.bacteriaanalysis.entity.FactSample;
 import com.bacteriaanalysis.model.BacteriaInput;
 import com.bacteriaanalysis.model.BacteriaSample;
 import com.bacteriaanalysis.service.BacteriaService;
@@ -20,7 +21,7 @@ public class BacteriaController {
     @Autowired
     BacteriaService bacteriaService;
     @PostMapping
-    public ResponseEntity<List<DimSample>> addBacteria(@RequestBody BacteriaInput input) {
+    public ResponseEntity<List<FactSample>> addBacteria(@RequestBody BacteriaInput input) {
         return bacteriaService.addBacteria(input);
     }
 }

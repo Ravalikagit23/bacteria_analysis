@@ -29,4 +29,7 @@ public class FactSample {
         this.createdBy = createdBy;
 
     }
+    public FactSample(){
+
+    }
 }

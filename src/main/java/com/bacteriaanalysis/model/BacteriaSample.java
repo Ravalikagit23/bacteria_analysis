@@ -9,4 +9,19 @@ public class BacteriaSample {
     private String bacteriaName;
     Map<String, Integer>propertiesMap;
 
+    public String getBacteriaName() {
+        return bacteriaName;
+    }
+
+    public void setBacteriaName(String bacteriaName) {
+        this.bacteriaName = bacteriaName;
+    }
+
+    public Map<String, Integer> getPropertiesMap() {
+        return propertiesMap;
+    }
+
+    public void setPropertiesMap(Map<String, Integer> propertiesMap) {
+        this.propertiesMap = propertiesMap;
+    }
 }

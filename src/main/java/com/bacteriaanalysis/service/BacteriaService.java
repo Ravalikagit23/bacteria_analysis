@@ -2,8 +2,11 @@ package com.bacteriaanalysis.service;
 
 //import com.bacteriaanalysis.dao.BacteriaDao;
 //import com.bacteriaanalysis.dao.BacteriaDao;
+
 import com.bacteriaanalysis.dao.BacteriaDimSampleDao;
+import com.bacteriaanalysis.dao.BacteriaFactSampleDao;
 import com.bacteriaanalysis.entity.DimSample;
+import com.bacteriaanalysis.entity.FactSample;
 import com.bacteriaanalysis.model.BacteriaInput;
 import com.bacteriaanalysis.model.BacteriaSample;
 import com.bacteriaanalysis.model.BacteriaValue;
@@ -24,12 +27,14 @@ import java.util.zip.ZipInputStream;
 public class BacteriaService {
     @Autowired
     BacteriaDimSampleDao bacteriaDimSampleDao;
+    @Autowired
+    BacteriaFactSampleDao bacteriaFactSampleDao;
 
-    public ResponseEntity<List<DimSample> >addBacteria(BacteriaInput input) {
+    public ResponseEntity<List<FactSample>> addBacteria(BacteriaInput input) {
         String accessKey = input.getAccessKey();
         byte[] zipData = input.getZipFolder();
-        List<BacteriaSample> bacteriaSampleList= new ArrayList<>();
-        List<BacteriaValue> bacteriaValueList= new ArrayList<>();
+        Map<String, BacteriaSample> bacteriaSampleMap = new HashMap<>();
+        Map<String, BacteriaValue> bacteriaValueMap = new HashMap<>();
 
 
         try (ByteArrayInputStream bais = new ByteArrayInputStream(zipData);
@@ -44,11 +49,12 @@ public class BacteriaService {
                     // Read each line of the CSV file-
                     while ((line = reader.readLine()) != null) {
                         BacteriaSample bacteriaSample = this.getBacteriaSample(line);
-                        bacteriaSampleList.add(bacteriaSample);
+                        bacteriaSampleMap.put(bacteriaSample.getBacteriaName(), bacteriaSample);
+
                         // Do something with each line of the CSV file
                     }
 
-                } else if(zipEntry.getName().endsWith("value.csv")) {
+                } else if (zipEntry.getName().endsWith("value.csv")) {
                     // Read the content of the CSV file
                     BufferedReader reader = new BufferedReader(new InputStreamReader(zis));
                     String line;
@@ -58,7 +64,7 @@ public class BacteriaService {
                         // Do something with each line of the CSV file
 //
                         BacteriaValue bacteriaSample2 = this.getBacteriaValue(line);
-                        bacteriaValueList.add(bacteriaSample2);
+                        bacteriaValueMap.put(bacteriaSample2.getBacteriaName(), bacteriaSample2);
 
                     }
 
@@ -68,25 +74,55 @@ public class BacteriaService {
         } catch (IOException e) {
             System.out.println("Error occured while");
         }
-List<DimSample> dimSample=new ArrayList<>();
-        for(BacteriaValue bacteriaValue :bacteriaValueList){
-            String bacteriaName = bacteriaValue.getBacteriaName();
-            DimSample dimsample1=new DimSample();
-          dimsample1.setBacteriaString(bacteriaName);
-          dimsample1.setCreatedBy("Ravali");
-          dimsample1.setCreateDate(new Date());
-          dimSample.add(dimsample1);
+        List<DimSample> dimSampleList = new ArrayList<>();
+        for (String bacteriaName : bacteriaValueMap.keySet()) {
+            DimSample dimsample1 = new DimSample();
+            dimsample1.setBacteriaString(bacteriaName);
+            dimsample1.setCreatedBy("Ravali");
+            dimsample1.setCreateDate(new Date());
+            dimSampleList.add(dimsample1);
         }
-        bacteriaDimSampleDao.saveAll(dimSample);
+        dimSampleList = bacteriaDimSampleDao.saveAll(dimSampleList);
 
-        return new ResponseEntity<>(dimSample, HttpStatus.ACCEPTED);
+        List<FactSample> factSampleList = new ArrayList<>();
+
+
+        for (DimSample newDimSampleObject : dimSampleList) {// For each bacteara-10 bactearia
+
+            String bacteriaName = newDimSampleObject.getBacteriaString();
+            BacteriaSample bacteriaSample = bacteriaSampleMap.get(bacteriaName);
+            //bacteariaCounts
+            Map<String, Integer> bacteriaSampleCounts = bacteriaSample.getPropertiesMap();//10- sample counts
+
+            BacteriaValue bacteriaValue = bacteriaValueMap.get(bacteriaName);
+            //bacteariaValues
+            Map<String, Double> bacteriaSampleValues = bacteriaValue.getPropertiesMap();//10-//10- sample values<Sample Id, value>
+
+            for (String sampleId : bacteriaSampleCounts.keySet()) {
+
+                FactSample factSample1 = new FactSample();
+
+                factSample1.setBacteriaFkId(newDimSampleObject.getBacteriaId());//1
+                factSample1.setBacteriaCount(bacteriaSampleCounts.get(sampleId));
+                factSample1.setBacteriaValue(bacteriaSampleValues.get(sampleId));
+                factSample1.setSampleId(sampleId);
+                factSample1.setCreateDate(newDimSampleObject.getCreateDate());
+                factSample1.setCreatedBy(newDimSampleObject.getCreatedBy());
+                factSampleList.add(factSample1);
+            }
+        }
+       bacteriaFactSampleDao.saveAll(factSampleList);
+
+
+
+        return new ResponseEntity<>(factSampleList, HttpStatus.ACCEPTED);
     }
 
     public BacteriaSample getBacteriaSample(String line) {
         String[] tokens = line.split(",");
-        BacteriaSample bacteriaSample=new BacteriaSample();
+        BacteriaSample bacteriaSample = new BacteriaSample();
         bacteriaSample.setBacteriaName(tokens[0]);
-        Map<String, Integer> propertiesMap=new HashMap<>();
+        Map<String, Integer> propertiesMap = new HashMap<>();
         propertiesMap.put("4AHXT4", Integer.parseInt(tokens[1]));
         propertiesMap.put("VQBLOB", Integer.parseInt(tokens[2]));
         propertiesMap.put("QWE1YH", Integer.parseInt(tokens[3]));
@@ -100,14 +136,15 @@ List<DimSample> dimSample=new ArrayList<>();
         bacteriaSample.setPropertiesMap(propertiesMap);
         return bacteriaSample;
     }
-    public BacteriaValue getBacteriaValue(String line){
-         String[] tokens = line.split(",");
-         BacteriaValue bacteriaValue=new BacteriaValue();
-         bacteriaValue.setBacteriaName(tokens[0]);
-        Map<String, Double> propertiesMap=new HashMap<>();
+
+    public BacteriaValue getBacteriaValue(String line) {
+        String[] tokens = line.split(",");
+        BacteriaValue bacteriaValue = new BacteriaValue();
+        bacteriaValue.setBacteriaName(tokens[0]);
+        Map<String, Double> propertiesMap = new HashMap<>();
         propertiesMap.put("4AHXT4", Double.parseDouble(tokens[1]));
-        propertiesMap.put("VQBLOB",Double.parseDouble(tokens[2]));
-        propertiesMap.put("QWE1YH",Double.parseDouble(tokens[3]));
+        propertiesMap.put("VQBLOB", Double.parseDouble(tokens[2]));
+        propertiesMap.put("QWE1YH", Double.parseDouble(tokens[3]));
         propertiesMap.put("M32852", Double.parseDouble(tokens[4]));
         propertiesMap.put("N1GPT5", Double.parseDouble(tokens[5]));
         propertiesMap.put("9GW59W", Double.parseDouble(tokens[6]));
@@ -116,6 +153,6 @@ List<DimSample> dimSample=new ArrayList<>();
         propertiesMap.put("XG8W8D", Double.parseDouble(tokens[9]));
         propertiesMap.put("HD882N", Double.parseDouble(tokens[10]));
         bacteriaValue.setPropertiesMap(propertiesMap);
-         return bacteriaValue;
-     }
+        return bacteriaValue;
+    }
 }

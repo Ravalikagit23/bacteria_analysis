@@ -5,23 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f993e81a-5cf9-4fff-bc7e-a17112a94a5c" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ReadMe.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/bacteriaanalysis/BacteriaAnalysisApplication.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/bacteriaanalysis/controller/BacteriaController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/bacteriaanalysis/dao/BacteriaDao.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/bacteriaanalysis/model/BacteriaInput.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/bacteriaanalysis/model/BacteriaSample.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/bacteriaanalysis/model/BacteriaValue.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/bacteriaanalysis/service/BacteriaService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/AppTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/bacteriaanalysis/controller/BacteriaController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/bacteriaanalysis/controller/BacteriaController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/bacteriaanalysis/entity/FactSample.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/bacteriaanalysis/entity/FactSample.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/bacteriaanalysis/model/BacteriaSample.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/bacteriaanalysis/model/BacteriaSample.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/bacteriaanalysis/service/BacteriaService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/bacteriaanalysis/service/BacteriaService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -32,6 +20,7 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Class" />
+        <option value="Interface" />
       </list>
     </option>
   </component>
@@ -89,6 +78,43 @@
       <option name="presentableId" value="Default" />
       <updated>1715811644285</updated>
     </task>
+    <task id="LOCAL-00001" summary="Initial commit">
+      <created>1716486616016</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1716486616016</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Initial commit" />
+    <option name="LAST_COMMIT_MESSAGE" value="Initial commit" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/bacteriaanalysis/service/BacteriaService.java</url>
+          <line>33</line>
+          <option name="timeStamp" value="13" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/bacteriaanalysis/service/BacteriaService.java</url>
+          <line>86</line>
+          <option name="timeStamp" value="14" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/main/java/com/bacteriaanalysis/controller/BacteriaController.java</url>
+          <line>23</line>
+          <properties class="com.bacteriaanalysis.controller.BacteriaController" method="addBacteria">
+            <option name="EMULATED" value="true" />
+            <option name="WATCH_EXIT" value="false" />
+          </properties>
+          <option name="timeStamp" value="15" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
