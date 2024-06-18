@@ -8,11 +8,10 @@ import com.bacteriaanalysis.service.BacteriaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -20,8 +19,9 @@ import java.util.List;
 public class BacteriaController {
     @Autowired
     BacteriaService bacteriaService;
+
     @PostMapping
-    public ResponseEntity<List<FactSample>> addBacteria(@RequestBody BacteriaInput input) {
-        return bacteriaService.addBacteria(input);
-    }
+    public ResponseEntity<List<FactSample>> addBacteria(@RequestParam MultipartFile zipFolder, @RequestParam String accessKey ) throws IOException {
+        return bacteriaService.addBacteria(zipFolder.getBytes(),accessKey);
+}
 }

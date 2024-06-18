@@ -7,6 +7,7 @@ import com.bacteriaanalysis.dao.BacteriaDimSampleDao;
 import com.bacteriaanalysis.dao.BacteriaFactSampleDao;
 import com.bacteriaanalysis.entity.DimSample;
 import com.bacteriaanalysis.entity.FactSample;
+import com.bacteriaanalysis.exception.InvalidBacteriaException;
 import com.bacteriaanalysis.model.BacteriaInput;
 import com.bacteriaanalysis.model.BacteriaSample;
 import com.bacteriaanalysis.model.BacteriaValue;
@@ -15,10 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -30,13 +28,13 @@ public class BacteriaService {
     @Autowired
     BacteriaFactSampleDao bacteriaFactSampleDao;
 
-    public ResponseEntity<List<FactSample>> addBacteria(BacteriaInput input) {
-        String accessKey = input.getAccessKey();
-        byte[] zipData = input.getZipFolder();
+    public ResponseEntity<List<FactSample>> addBacteria(byte[] zipFolder,String accessKey) {
+        String access = accessKey;
+        byte[] zipFile = zipFolder;
         Map<String, BacteriaSample> bacteriaSampleMap = new HashMap<>();
         Map<String, BacteriaValue> bacteriaValueMap = new HashMap<>();
 
-        try (ByteArrayInputStream bais = new ByteArrayInputStream(zipData);
+        try (ByteArrayInputStream bais = new ByteArrayInputStream(zipFile);
              ZipInputStream zis = new ZipInputStream(bais)) {
             ZipEntry zipEntry;
             while ((zipEntry = zis.getNextEntry()) != null) {
@@ -61,15 +59,26 @@ public class BacteriaService {
                     // Read each row1 of the CSV file
                     while ((row1 = reader.readLine()) != null) {
                         // Do something with each row1 of the CSV file
-                        BacteriaValue bacteriaSample2 = this.getBacteriaValue(tableHeader,row1);
+                        BacteriaValue bacteriaSample2 = this.getBacteriaValue(tableHeader, row1);
                         bacteriaValueMap.put(bacteriaSample2.getBacteriaName(), bacteriaSample2);
                     }
                 }
+                else{
+                    throw new InvalidBacteriaException("File was not found");
+                }
+
+
             }
-        } catch (IOException e) {
+
+        } catch (Exception e) {
             System.out.println("Error occured while");
+            e.printStackTrace();
         }
 
+
+        if(bacteriaSampleMap.size()!=bacteriaValueMap.size()){
+            throw new InvalidBacteriaException("bacteria string size mismatch");
+        }
         List<DimSample> dimSampleList = new ArrayList<>();
         for (String bacteriaName : bacteriaValueMap.keySet()) {
             DimSample dimsample1 = new DimSample();
@@ -88,12 +97,17 @@ public class BacteriaService {
         List<FactSample> factSampleList = new ArrayList<>();
         for (DimSample newDimSampleObject : dimSampleList) { // For each bacteara-10 bactearia
             String bacteriaName = newDimSampleObject.getBacteriaString();
+            if(!bacteriaSampleMap.containsKey(bacteriaName)|| !bacteriaValueMap.containsKey(bacteriaName)){
+                throw new InvalidBacteriaException("Bacteria String mismatch") ;
+            }
+
             BacteriaSample bacteriaSample = bacteriaSampleMap.get(bacteriaName);
             //bacteariaCounts
             Map<String, Integer> bacteriaSampleCounts = bacteriaSample.getPropertiesMap();//10- sample counts
             BacteriaValue bacteriaValue = bacteriaValueMap.get(bacteriaName);
             //bacteariaValues
-            Map<String, Double> bacteriaSampleValues = bacteriaValue.getPropertiesMap();//10-//10- sample values<Sample Id, value>
+            Map<String, Double> bacteriaSampleValues = bacteriaValue.getPropertiesMap();
+            //10-//10- sample values<Sample Id, value>
             for (String sampleId : bacteriaSampleCounts.keySet()) {
                 FactSample factSample1 = new FactSample();
                 factSample1.setBacteriaFkId(newDimSampleObject.getBacteriaId());//1
@@ -116,7 +130,7 @@ public class BacteriaService {
         bacteriaSample.setBacteriaName(dataTokens[0]);
         Map<String, Integer> propertiesMap = new HashMap<>();
         if(dataTokens.length!=headerTokens.length){
-            return null;
+            throw new InvalidBacteriaException("sample count mismatch");
         }
         int n=dataTokens.length;
         for (int i = 1; i < Math.min(headerTokens.length, dataTokens.length); i++) {
@@ -135,7 +149,7 @@ public class BacteriaService {
         bacteriaValue.setBacteriaName(tokens[0]);
         Map<String, Double> propertiesMap = new HashMap<>();
         if(tokens.length!=headerToken.length){
-            return null;
+            throw new InvalidBacteriaException("sample count mismatch");
         }
         int n=tokens.length;
         for(int i=1;i<n;i++){
